@@ -12,6 +12,9 @@ app.config['MYSQL_DATABASE_DB'] = 'BucketList'
 app.config['MYSQL_DATABASE_HOST'] = 'localhost'
 mysql.init_app(app)
 
+@app.route('/showSignin')
+def showSignin():
+    return render_template('signin.html')
 
 @app.route('/')
 def main():
@@ -31,12 +34,12 @@ def signUp():
 
         # validate the received values
         if _name and _email and _password:
+            _hashed_password = generate_password_hash(_password)
             
             # All Good, let's call MySQL
             
             conn = mysql.connect()
             cursor = conn.cursor()
-            _hashed_password = generate_password_hash(_password)
             cursor.callproc('sp_createUser',(_name,_email,_hashed_password))
             data = cursor.fetchall()
 
@@ -55,4 +58,4 @@ def signUp():
         conn.close()
 
 if __name__ == "__main__":
-    app.run(port=5002)
+    app.run(port=5000)
